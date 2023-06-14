@@ -1,0 +1,63 @@
+        ---
+        title: "Aula II"
+        format: html
+        ---
+#loading packages
+```{r}
+library(gsheet) #carregar planilha do google
+library(remotes)
+library(tidyverse)
+library(r4pde)
+```
+
+# Pacotes no R
+
+## Aula 2
+
+### Carregar pacotes
+
+O carregamento de **pacotes** pode ser feito pelo menu ou então com um comando no *console*.
+
+Instalação do R [nesse link.](https://posit.co/download/rstudio-desktop/)
+
+Abaixo demonstraremos como instalar e carregar um pacote.
+
+```{r}
+#| warning: false
+#| message: false
+
+library (tidyverse)
+```
+
+Abaixo demonstraremos como instalar e carregar um pacote. A instalação é feita através do menu: Tools > Install packages.
+
+Vamos ver como invocar a função de um pacote.
+
+```{r}
+
+d <- gsheet2tbl ("docs.google.com/spreadsheets/d/1I9mJsS5QnXF2TNNntTy-HrcdHmIF9wJ8ONYvEJTXSNo")
+
+dplyr::arrange(d, mpg)
+
+
+
+library (remotes)
+
+install_github("emdelponte/r4pde")
+
+
+```
+# Utilizando o pacote r4pde
+```{r}
+
+unit <- c(1:12) #criando uma variavel chamada unit
+class <- c(2,3,1,1,3,4,5,0,2,5,2,1) #Criando uma variavel chamada class
+ratings <- data.frame(unit, class) #Criando um conjunto de dados chamado ratings (junção da variavel unit e class)
+DSI(unit = ratings$unit, class = ratings$class, max = 6)
+
+ratings$class
+mean (ratings$class)
+sd (ratings$class)
+summary (ratings)
+```
+
