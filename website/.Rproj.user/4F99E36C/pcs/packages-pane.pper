@@ -1,7 +1,0 @@
-{
-    "installOptions": {
-        "installFromRepository": true,
-        "libraryPath": "C:/Users/dyeni/Documents/GitHub/FIP606/website/renv/library/R-4.2/x86_64-w64-mingw32",
-        "installDependencies": true
-    }
-}
