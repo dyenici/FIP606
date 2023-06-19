@@ -1,0 +1,146 @@
+---
+title: "Regressão Linear"
+format: html
+---
+
+## Regressão linear
+A regressão linear é uma técnica de análise de dados que prevê o valor de dados desconhecidos usando outro valor de dados relacionado e conhecido. Ele modela matematicamente a variável desconhecida ou dependente e a variável conhecida ou independente como uma equação linear. 
+
+```{r}
+warning(FALSE)
+
+library(tidyverse)
+library(readxl)
+
+estande <- read_excel("dados-diversos.xlsx","estande")
+
+estande |> ggplot (aes(trat,nplants))+
+  geom_point()+
+  facet_wrap(~exp)+
+  ylim(0,max(estande$nplants))+
+  geom_smooth(se=F)
+```
+
+### "group_by": seleciona apenas a variável de interesse
+
+```{r}
+estande2 <- estande |> 
+  filter(exp ==2) |> 
+  group_by(trat) |> 
+  summarise(mean_nplants =
+              mean(nplants))
+
+estande2 |> ggplot(aes(trat, mean_nplants))+
+  geom_point()+
+  #geom_line()+
+  geom_smooth(se = F,formula = y ~ poly(x,2), method = "lm")+
+  annotate (geom ="text",
+           x=25, y=70,
+           label= "y=66.3 - 1.777x + //////0.0222x
+           R² = 0.88")
+
+#R² - coeficiente de determinação (regressão linear)
+```
+
+### Akaike Information Criterion (AIC) 
+Permite que você teste o quão bem seu modelo se ajusta ao conjunto de dados sem sobreajustá-lo. A pontuação AIC recompensa os modelos que atingem uma alta pontuação de qualidade de ajuste e os penaliza se eles se tornarem excessivamente complexos. Por si só, a pontuação AIC não é muito útil, a menos que seja comparada com a pontuação AIC de um modelo concorrente. Espera-se que o modelo com a pontuação AIC mais baixa atinja um equilíbrio superior entre sua capacidade de ajustar o conjunto de dados e sua capacidade de evitar o ajuste excessivo do conjunto de dados.
+
+```{r}
+estande2 <- estande2 |> 
+  mutate(trat2=trat^2)
+
+m1 <- lm(mean_nplants ~ trat,
+         data=estande2)
+summary(m1)
+hist(m1$residuals)
+
+m2 <- lm(mean_nplants ~trat + trat2,
+         data = estande2)
+summary(m2)
+
+AIC(m1,m2)
+```
+
+## Duas variáveis resposta
+A relação é com duas variáveis respostas - teste de associação;
+Análise de correlação - coeficiente de correlação (coef. de Pearson);
+R é sempre maior que R².
+
+### Coeficiente de Pearson
+O coeficiente de correlação de Pearson é um teste que mede a relação estatística entre duas variáveis contínuas. Se a associação entre os elementos não for linear, o coeficiente não será representado adequadamente.
+
+```{r}
+mofo<- read_excel("dados-diversos.xlsx", "mofo")
+
+mofo |>
+  ggplot(aes(inc, yld))+
+  geom_point()+
+  geom_smooth(se=F, method= "lm")+
+  facet_wrap(~study)
+```
+
+### cor.test
+Esta função realiza um teste de correlação entre duas variáveis. 
+
+```{r}
+#Experimento 1
+
+mofo1 <- mofo |> 
+  filter (study ==1)
+mofo1
+cor.test(mofo1$inc, mofo1$yld)
+```
+
+```{r}
+#Experimento 2
+
+mofo1 <- mofo |> 
+  filter (study ==2)
+mofo1
+cor.test(mofo1$inc, mofo1$yld)
+```
+
+```{r}
+#Experimento 3
+
+mofo1 <- mofo |> 
+  filter (study ==3)
+mofo1
+cor.test(mofo1$inc, mofo1$yld)
+```
+
+```{r}
+#Experimento 4
+
+mofo1 <- mofo |> 
+  filter (study ==4)
+mofo1
+cor.test(mofo1$inc, mofo1$yld)
+```
+
+```{r}
+cor.test(mofo1$inc, mofo1$yld)
+
+pcor <- cor(mofo1 |> select(3:5))
+library(corrplot)
+corrplot (pcor, method = 'number', type = "lower")
+
+```
+
+```{r}
+cor.test(mofo$inc, mofo$yld)
+
+pcor <- cor(mofo |> select(3:5))
+library(corrplot)
+corrplot (pcor, method = 'number', type = "lower")
+```
+
+```{r}
+shapiro.test(mofo1$yld)
+
+cor.test(mofo1$inc, mofo1$yld, method = "spearman")
+pcor <- cor(mofo |> select(3:5))
+library(corrplot)
+corrplot (pcor, method = 'number', type = "lower")
+```
+

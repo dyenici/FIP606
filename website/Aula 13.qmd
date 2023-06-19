@@ -1,0 +1,80 @@
+---
+title: "Análise de Regressão"
+format: html
+---
+
+## Análise de Regressão
+Análise de regressão é uma técnica estatística utilizada para investigar a relação existente entre variáveis através da construção de uma equação (um modelo). De maneira geral, essa técnica pode ser utilizada com vários objetivos, dentre os quais se pode destacar: descrever a relação entre variáveis para entender um processo ou fenômeno; prever o valor de uma variável a partir do conhecimento dos valores das outras variáveis; substituir a medição de uma variável pela observação dos valores de outras variáveis; controlar os valores de uma variável em uma faixa de interesse.
+
+### Regressão: 
+Slope (inclinação) diferente do ângulo 0.
+
+### Anova
+Para variáveis categóricas/comparação.
+
+```{r}
+warning(FALSE)
+
+library(tidyverse)
+library(readxl)
+
+estande <- read_excel("dados-diversos.xlsx","estande")
+
+estande |> ggplot (aes(trat,nplants))+
+  geom_point()+
+  facet_wrap(~exp)+
+  ylim(0,max(estande$nplants))+
+  geom_smooth(se=F, method="lm")
+```
+
+```{r}
+#EXPERIMENTO 1
+
+exp1<-estande |> filter (exp==1)
+m1<-lm(nplants~trat,data=exp1)
+summary(m1)
+
+g1 <- exp1 |> 
+  ggplot(aes(trat,nplants))+
+  geom_point()+
+  geom_smooth(method="lm",se=F)+
+  annotate(geom="text",x=24,
+           y=70,label="y=52,5-0,24x")
+```
+
+```{r}
+#EXPERIMENTO 2
+
+exp2<-estande |> filter (exp==2)
+m2<-lm(nplants~trat,data=exp2)
+summary(m2)
+
+g2 <- exp2 |> 
+  ggplot(aes(trat,nplants))+
+  geom_point()+
+  geom_smooth(method="lm",se=F)+
+  annotate(geom="text",x=24,
+           y=70,label="y=60,9-0,7x")
+```
+
+```{r}
+#EXPERIMENTO 3
+
+exp3<-estande |> filter (exp==3)
+m3<-lm(nplants~trat,data=exp3)
+summary(m3)
+
+g3 <- exp3 |> 
+  ggplot(aes(trat,nplants))+
+  geom_point()+
+  geom_smooth(method="lm",se=F)+
+  annotate(geom="text",x=24,
+           y=70,label="y=95,75-0,76x")
+```
+
+```{r}
+library(patchwork)
+
+g1|g2|g3
+```
+

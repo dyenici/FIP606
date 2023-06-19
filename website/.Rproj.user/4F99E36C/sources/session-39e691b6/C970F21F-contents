@@ -1,0 +1,104 @@
+        ---
+        title: "Comandos básicos para começar no R"
+        format: html
+        ---
+
+## Download R Studio
+
+Link para instalação do R e do R Studio (https://posit.co/download/rstudio-desktop/)
+
+## Instalação de Pacotes
+
+A instalação de pacotes pode ser feita através do menu: Tools \> Install packages..., ou ainda:
+
+```{r}
+#install.packages(nome do pacote de interesse)
+```
+
+## Carregamento de pacotes
+
+Após a instalação, o carregamento de pacotes pode ser feito na opção "packages", onde na barra de busca é inserido o nome do programa de interesse e logo em seguida ele é selecionado ou ainda através de um comando, o "library". É importante lembrar que antes de iniciar qualquer trabalho no R, os pacotes de interesse precisam ser carregados.
+
+```{r}
+library(tidyverse)
+library(remotes)
+library(r4pde)
+```
+
+## Remoção de mensagens de alerta no carregamento de pacotes
+
+A remoção das mensagens de alerta que são emitidas por alguns pacotes deixa a visualização das informações dispostas mais limpa.
+
+```{r}
+warning(FALSE)
+```
+
+## Invocando a função de um pacote
+
+Após o carregamento do pacote de interesse, é possível trazer as informações de planilhas externas para dentro do R. Abaixo, um exemplo:
+
+Se os dados que serão trabalhados estão dispostos em uma planilha do Google Sheet, então faz-se necessário instalar um pacote que consiga trabalhar esse tipo de planilha. Então como primeiro passo, instalo e carrego esse pacote.
+
+```{r}
+
+## Carregamento de planilhas do Google Sheet
+
+library(gsheet)
+```
+
+Após o carregamento do pacote, um nome é dado para o meu conjunto e uma função é atribuída. (A atribuição de funções é dada pelo "\<-"). Nesse caso, o conjunto foi nomeado "d" e a função atribuída foi "gsheet2tbl", que pertence ao pacote "gsheet". Entre parenteses, o link da planilha disponível no Google Sheet.
+
+```{r}
+d <- gsheet2tbl ("docs.google.com/spreadsheets/d/1I9mJsS5QnXF2TNNntTy-HrcdHmIF9wJ8ONYvEJTXSNo")
+
+dplyr::arrange(d, mpg)
+
+#O dplyr, função do pacote Tidyverse, anteriormente carregado, seguido de ":: arrange" alterou a ordem as linhas da minha tabela. Deixou os dados em ordem crescente, melhorando a visualização.
+
+```
+
+## Instalação de Pacotes do GitHub
+
+O R usa como base para instalação de pacotes o CRAN, mas é possível que durante o desenvolvimento do trabalho, o pacote de uma base externa seja necessário, como por exemplo o GitHub. Para conseguir trazer para dentro do R o pacote de interesse, adota-se os seguintes passos:
+
+```{r}
+library (remotes)
+
+#install_github("nome do usuário do GitHub/nome do pacote de interesse")
+
+install_github("emdelponte/r4pde")
+
+```
+
+## Usando o pacote r4pde
+
+Uma vez instalado, o pacote da base externa vai funcionar com as funções disponíveis no R e trabalhar com os dados de interesse. Como, por exemplo:
+
+```{r}
+# Variável "unit": Um vetor numérico que representa a unidade de medida.
+
+unit <- c(1:12)
+
+# Variável "class": Um vetor de fator que representa os rótulos da classe.
+
+class <- c(2,3,1,1,3,4,5,0,2,5,2,1)
+
+# Criando um conjunto de dados chamado "ratings" onde eu junto as variáveis "unit" e "class". A junção das variáveis se deu pela função atribuída "data.frame".
+
+ratings <- data.frame(unit, class)
+
+#DSI: Calcula o Índice de Gravidade da Doença.
+
+DSI(unit = ratings$unit, class = ratings$class, max = 6)
+
+#max: Escala numérica que representa o valor máximo possível da unidade de medida.
+
+#$: Variável dentro do data frame.
+
+ratings$class
+mean (ratings$class) #média
+sd (ratings$class) #desvio padrão
+
+# Sumarização dos dados
+summary (ratings)
+```

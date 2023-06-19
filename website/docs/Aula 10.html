@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.269">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>FIP 606 - Anova I fator, Teste de Normalidade e Homocedasticidade, Teste não-paramétrico</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">FIP 606</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-r-básico" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">R Básico</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-r-básico">    
+        <li>
+    <a class="dropdown-item" href="./Aula 2.html">
+ <span class="dropdown-text">Comandos básicos para começar no R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./Aula 3.html">
+ <span class="dropdown-text">Importação de dados</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-gráficos-no-r" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Gráficos no R</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-gráficos-no-r">    
+        <li>
+    <a class="dropdown-item" href="./Aula 4.html">
+ <span class="dropdown-text">Gráficos em ggplot</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./Aula 5.html">
+ <span class="dropdown-text">Gráficos em ggplot - parte 2</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./Aula 6.html">
+ <span class="dropdown-text">Gráficos de dispersão e Histogramas</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-estatística-no-r" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Estatística no R</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-estatística-no-r">    
+        <li>
+    <a class="dropdown-item" href="./Aula 8.html">
+ <span class="dropdown-text">Teste t</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./Aula 9.html">
+ <span class="dropdown-text">Testes paramétricos e não paramétricos</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./Aula 10.html">
+ <span class="dropdown-text">Anova I fator, Teste de Normalidade e Homocedasticidade, Teste não-paramétrico</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./Aula 11.html">
+ <span class="dropdown-text">ANOVA Fatorial</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./Aula 12.html">
+ <span class="dropdown-text">ANOVA com bloco</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./Aula 13.html">
+ <span class="dropdown-text">Análise de Regressão</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./Aula 14.html">
+ <span class="dropdown-text">Regressão Linear</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./Aula 15.html">
+ <span class="dropdown-text">Comparação de Frequência</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./Aula 17.html">
+ <span class="dropdown-text">Regressão não linear e EC50</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-mapas" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Mapas</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-mapas">    
+        <li>
+    <a class="dropdown-item" href="./Aula 16.html">
+ <span class="dropdown-text">Construindo Mapas no R</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://br.linkedin.com/in/dy%C3%AAnici-rodrigues-30ba6a241"><i class="bi bi-linkedin" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-bi-instagram" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+      <i class="bi bi-instagram" role="img">
+</i> 
+ <span class="menu-text"></span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-bi-instagram">    
+        <li>
+    <a class="dropdown-item" href="https://www.instagram.com/dyenici/">
+ <span class="dropdown-text">Dyênici Rodrigues</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://www.instagram.com/emdelponte/">
+ <span class="dropdown-text">Emerson M. Del Ponte</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://www.instagram.com/fitopatologiaufv/">
+ <span class="dropdown-text">Fitopatolofia UFV</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.youtube.com/edelponte"><i class="bi bi-youtube" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-bi-github" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+      <i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-bi-github">    
+        <li>
+    <a class="dropdown-item" href="https://github.com/dyenici">
+ <span class="dropdown-text">Dyênici Rodrigues</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://github.com/emdelponte">
+ <span class="dropdown-text">Emerson M. Del Ponte</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#anova-i-fator" id="toc-anova-i-fator" class="nav-link active" data-scroll-target="#anova-i-fator">Anova I fator</a></li>
+  <li><a href="#testes-de-normalidade-e-homocedasticidade" id="toc-testes-de-normalidade-e-homocedasticidade" class="nav-link" data-scroll-target="#testes-de-normalidade-e-homocedasticidade">Testes de Normalidade e Homocedasticidade</a>
+  <ul class="collapse">
+  <li><a href="#teste-de-normalidade" id="toc-teste-de-normalidade" class="nav-link" data-scroll-target="#teste-de-normalidade">Teste de Normalidade</a></li>
+  <li><a href="#teste-de-homocedasticidade" id="toc-teste-de-homocedasticidade" class="nav-link" data-scroll-target="#teste-de-homocedasticidade">Teste de Homocedasticidade</a></li>
+  <li><a href="#pacote-emmeans" id="toc-pacote-emmeans" class="nav-link" data-scroll-target="#pacote-emmeans">Pacote “emmeans”</a></li>
+  <li><a href="#pacote-multcomp" id="toc-pacote-multcomp" class="nav-link" data-scroll-target="#pacote-multcomp">Pacote “multcomp”</a></li>
+  <li><a href="#pacote-multcompview" id="toc-pacote-multcompview" class="nav-link" data-scroll-target="#pacote-multcompview">Pacote “multcompView”</a></li>
+  <li><a href="#cld" id="toc-cld" class="nav-link" data-scroll-target="#cld">cld</a></li>
+  </ul></li>
+  <li><a href="#teste-não-paramétrico" id="toc-teste-não-paramétrico" class="nav-link" data-scroll-target="#teste-não-paramétrico">Teste Não Paramétrico</a>
+  <ul class="collapse">
+  <li><a href="#teste-de-kruskal-wallis" id="toc-teste-de-kruskal-wallis" class="nav-link" data-scroll-target="#teste-de-kruskal-wallis">Teste de Kruskal-Wallis</a></li>
+  <li><a href="#glm" id="toc-glm" class="nav-link" data-scroll-target="#glm">glm</a></li>
+  <li><a href="#família" id="toc-família" class="nav-link" data-scroll-target="#família">Família</a></li>
+  </ul></li>
+  <li><a href="#transformação-boxcox" id="toc-transformação-boxcox" class="nav-link" data-scroll-target="#transformação-boxcox">Transformação BoxCox</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Anova I fator, Teste de Normalidade e Homocedasticidade, Teste não-paramétrico</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="anova-i-fator" class="level2">
+<h2 class="anchored" data-anchor-id="anova-i-fator">Anova I fator</h2>
+<p>A Análise de Variância, ou ANOVA, é uma análise estatística para determinar a contribuição de diferentes fatores na variância total de um experimento.</p>
+<p>A análise de variância de I fator, ou ANOVA simples, é uniletaral. Adequada para experimentos com apenas uma variável independente com dois ou mais níveis.</p>
+<p>Nessa etapa de aprendizagem, começamos a trabalhar algo que chamaremos de <strong>Análise Exploratória</strong>. Antes de determinar qualquer análise estatística no trabalho, é importante trabalhar uma análise visual. Essa análise já permite que algumas conclusões sejam feitas e que o caminho mais adequado seja escolhido. A análise exploratória permite quem está trabalhando os dados perceber se existe algum padrão de distribuição nos dados, se essa distribuição é, visualmente, normal, se os dados se agrupam de alguma forma, etc.</p>
+<p>Então, o primeiro passo agora, é explodar os dados.</p>
+<div class="cell" data-hash="Aula-10_cache/html/unnamed-chunk-1_c9ad9dbcc8be4099034e73d84c636e15">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span> (readxl)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span> (tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>micelial <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"dados-diversos.xlsx"</span>, <span class="st">"micelial"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>micelial <span class="sc">|&gt;</span> </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(especie, tcm))<span class="sc">+</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Aula-10_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Feita essa análise visual, seja com boxplot, histogramas, colunas, dispersão… partimos para aplicação da Anova I fator.</p>
+<div class="cell" data-hash="Aula-10_cache/html/unnamed-chunk-2_705d25530e95c1705a64ca9e7c00e239">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>aov1 <span class="ot">&lt;-</span> <span class="fu">aov</span>(tcm <span class="sc">~</span> especie, <span class="at">data =</span> micelial)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span> (aov1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            Df Sum Sq Mean Sq F value Pr(&gt;F)
+especie      4 0.4692 0.11729   1.983  0.117
+Residuals   37 2.1885 0.05915               </code></pre>
+</div>
+</div>
+</section>
+<section id="testes-de-normalidade-e-homocedasticidade" class="level2">
+<h2 class="anchored" data-anchor-id="testes-de-normalidade-e-homocedasticidade">Testes de Normalidade e Homocedasticidade</h2>
+<section id="teste-de-normalidade" class="level3">
+<h3 class="anchored" data-anchor-id="teste-de-normalidade">Teste de Normalidade</h3>
+<p>A suposição de normalidade dos dados amostrais é uma condição exigida para a realização de muitas inferências válidas a respeito de parâmetros populacionais. Vários dos diferentes métodos de estimação e testes de hipóteses existentes foram formulados sob a suposição de que a amostra aleatória tenha sido extraída de uma população gaussiana.</p>
+</section>
+<section id="teste-de-homocedasticidade" class="level3">
+<h3 class="anchored" data-anchor-id="teste-de-homocedasticidade">Teste de Homocedasticidade</h3>
+<p>Em análise de variância(ANOVA), há um pressuposto que deve ser atendido que é de os erros terem variância comum, ou seja, homocedasticidade. Isso implica que cada tratamento que se está sendo comparado pelo teste F, deve ter aproximadamente a mesma variância para que a ANOVA tenha validade. Quando este pressuposto não é atendido dizemos que as variâncias não são homogêneas, ou ainda, que existe heterocedasticidade.</p>
+<div class="cell" data-hash="Aula-10_cache/html/unnamed-chunk-3_c7ed1ba34a2997a1bec07e485cf584bd">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Checando as premissas</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span> (performance)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">check_heteroscedasticity</span>(aov1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>OK: Error variance appears to be homoscedastic (p = 0.175).</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_normality</span>(aov1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>OK: residuals appear as normally distributed (p = 0.074).</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Testes de Normalidade</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(aov1<span class="sc">$</span>residuals) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Aula-10_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Permite ver a curva de distribuição dos dados, confirmando o que se tem nos testes anteriores - distribuição normal.</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(aov1<span class="sc">$</span>residuals)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Shapiro-Wilk normality test
+
+data:  aov1$residuals
+W = 0.95101, p-value = 0.07022</code></pre>
+</div>
+</div>
+<p>Outra forma de verificar se uma amostra segue a distribuição gaussiana é através dos gráficos de envelope normal de probabilidade e seu envelope com intervalo de confiança simulado.</p>
+<p>Podemos fazer usando as funções “qqnorm()” e “qqline” sem o envelope:</p>
+<div class="cell" data-hash="Aula-10_cache/html/unnamed-chunk-4_fff7dc464d1eecfee4723667a31c1a0e">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(aov1<span class="sc">$</span>residuals)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">qqline</span>(aov1<span class="sc">$</span>residuals)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Aula-10_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Ou com o envelope simulado com o pacote “DHARMa” e a função “plot()”:</p>
+<div class="cell" data-hash="Aula-10_cache/html/unnamed-chunk-5_c14f82dd6f144a8491d7b3a8482e3c44">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span> (DHARMa)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">simulateResiduals</span>(aov1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Aula-10_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>É possível ainda encontrar casos como o exemplo abaixo:</p>
+<div class="cell" data-hash="Aula-10_cache/html/unnamed-chunk-6_bc26ce65f440679c6f6b5af9c70dd8e2">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>InsectSprays</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   count spray
+1     10     A
+2      7     A
+3     20     A
+4     14     A
+5     14     A
+6     12     A
+7     10     A
+8     23     A
+9     17     A
+10    20     A
+11    14     A
+12    13     A
+13    11     B
+14    17     B
+15    21     B
+16    11     B
+17    16     B
+18    14     B
+19    17     B
+20    17     B
+21    19     B
+22    21     B
+23     7     B
+24    13     B
+25     0     C
+26     1     C
+27     7     C
+28     2     C
+29     3     C
+30     1     C
+31     2     C
+32     1     C
+33     3     C
+34     0     C
+35     1     C
+36     4     C
+37     3     D
+38     5     D
+39    12     D
+40     6     D
+41     4     D
+42     3     D
+43     5     D
+44     5     D
+45     5     D
+46     5     D
+47     2     D
+48     4     D
+49     3     E
+50     5     E
+51     3     E
+52     5     E
+53     3     E
+54     6     E
+55     1     E
+56     1     E
+57     3     E
+58     2     E
+59     6     E
+60     4     E
+61    11     F
+62     9     F
+63    15     F
+64    22     F
+65    15     F
+66    16     F
+67    13     F
+68    10     F
+69    26     F
+70    26     F
+71    24     F
+72    13     F</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>insects <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(InsectSprays) <span class="sc">|&gt;</span> </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span> (spray, count)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>insects <span class="sc">|&gt;</span> </span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(spray, count))<span class="sc">+</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Aula-10_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Após a análise exploratória, é possível perceber que os dados apresentam uma distribuição um pouco diferente. Partimos para a aplicação de ANOVA e checar as premissas.</p>
+<div class="cell" data-hash="Aula-10_cache/html/unnamed-chunk-7_51d9a01cf0a124c23c8e61e04378ee4a">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>aov2 <span class="ot">&lt;-</span> <span class="fu">aov</span>(count <span class="sc">~</span> spray, <span class="at">data =</span> insects)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span> (aov2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            Df Sum Sq Mean Sq F value Pr(&gt;F)    
+spray        5   2669   533.8    34.7 &lt;2e-16 ***
+Residuals   66   1015    15.4                   
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_heteroscedasticity</span>(aov2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Warning: Heteroscedasticity (non-constant error variance) detected (p &lt; .001).</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_normality</span>(aov2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Warning: Non-normality of residuals detected (p = 0.022).</code></pre>
+</div>
+</div>
+<p>Feito isso, vemos que os dados não apresentam distruibuição normal e são heterocedasticos. Uma das alternativas que temos para trabalhar esse conjunto é a transformação. Nesse caso, usaremos a transformação em raiz (sqrt), mas o R tem uma série de transformações possíveis. As transformações são feitas por tentativa e erro, até que uma delas atenda o que você precisa.</p>
+<div class="cell" data-hash="Aula-10_cache/html/unnamed-chunk-8_0b42c3bf8cdb6866d48280f9c3b82861">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>aov3 <span class="ot">&lt;-</span> <span class="fu">aov</span>(<span class="fu">sqrt</span>(count) <span class="sc">~</span> spray, <span class="at">data =</span> insects)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span> (aov3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            Df Sum Sq Mean Sq F value Pr(&gt;F)    
+spray        5  88.44  17.688    44.8 &lt;2e-16 ***
+Residuals   66  26.06   0.395                   
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_heteroscedasticity</span>(aov3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>OK: Error variance appears to be homoscedastic (p = 0.854).</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_normality</span>(aov3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>OK: residuals appear as normally distributed (p = 0.681).</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Os dados transformados por raiz são normais e homocedaticos.</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Testes de Normalidade</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(aov3<span class="sc">$</span>residuals)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Aula-10_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(aov3<span class="sc">$</span>residuals)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Shapiro-Wilk normality test
+
+data:  aov3$residuals
+W = 0.98721, p-value = 0.6814</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Gráficos para distribuição gaussiana</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(aov3<span class="sc">$</span>residuals)</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="fu">qqline</span>(aov3<span class="sc">$</span>residuals)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Aula-10_files/figure-html/unnamed-chunk-8-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="pacote-emmeans" class="level3">
+<h3 class="anchored" data-anchor-id="pacote-emmeans">Pacote “emmeans”</h3>
+<p>Calcular médias marginais estimadas (EMMs) para fatores específicos ou combinações de fatores em um modelo linear; e opcionalmente, comparações ou contrastes entre eles. EMMs também são conhecidos como médias de mínimos quadrados.</p>
+<div class="cell" data-hash="Aula-10_cache/html/unnamed-chunk-9_0adc46347ca031c73416db8be63d8a25">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span> (emmeans)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>aov3_means <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(aov3, <span class="sc">~</span> spray,</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">type =</span> <span class="st">"response"</span>)</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>aov3_means</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> spray response    SE df lower.CL upper.CL
+ A        14.14 1.364 66   11.550    17.00
+ B        15.03 1.406 66   12.352    17.97
+ C         1.55 0.452 66    0.779     2.58
+ D         4.68 0.785 66    3.248     6.38
+ E         3.27 0.656 66    2.095     4.72
+ F        16.15 1.458 66   13.370    19.19
+
+Confidence level used: 0.95 
+Intervals are back-transformed from the sqrt scale </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pwpm</span>(aov3_means)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        A       B       C       D       E       F
+A [14.14]  0.9975  &lt;.0001  &lt;.0001  &lt;.0001  0.9145
+B  -0.116 [15.03]  &lt;.0001  &lt;.0001  &lt;.0001  0.9936
+C   2.516   2.632 [ 1.55]  0.0081  0.2513  &lt;.0001
+D   1.596   1.712  -0.919 [ 4.68]  0.7366  &lt;.0001
+E   1.951   2.067  -0.565   0.355 [ 3.27]  &lt;.0001
+F  -0.258  -0.142  -2.774  -1.854  -2.209 [16.15]
+
+Row and column labels: spray
+Upper triangle: P values   adjust = "tukey"
+Diagonal: [Estimates] (response)   type = "response"
+Lower triangle: Comparisons (estimate)   earlier vs. later</code></pre>
+</div>
+</div>
+</section>
+<section id="pacote-multcomp" class="level3">
+<h3 class="anchored" data-anchor-id="pacote-multcomp">Pacote “multcomp”</h3>
+<p>Testes simultâneos e intervalos de confiança para hipóteses lineares gerais em modelos paramétricos, incluindo efeitos lineares, lineares generalizados, lineares mistos e modelos de sobrevivência.</p>
+</section>
+<section id="pacote-multcompview" class="level3">
+<h3 class="anchored" data-anchor-id="pacote-multcompview">Pacote “multcompView”</h3>
+<p>Converta um vetor lógico ou um vetor de valores-p ou uma matriz de correlação, diferença ou distância em uma exibição identificando os pares para os quais as diferenças não foram significativamente diferentes.</p>
+</section>
+<section id="cld" class="level3">
+<h3 class="anchored" data-anchor-id="cld">cld</h3>
+<p>Extrai e exibe informações sobre todas as comparações pareadas de médias de mínimos quadrados.</p>
+<div class="cell" data-hash="Aula-10_cache/html/unnamed-chunk-10_52e6ef7492f9ad531b646e396624e0d7">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span> (multcomp)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span> (multcompView)</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cld</span>(aov3_means)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> spray response    SE df lower.CL upper.CL .group
+ C         1.55 0.452 66    0.779     2.58  1    
+ E         3.27 0.656 66    2.095     4.72  12   
+ D         4.68 0.785 66    3.248     6.38   2   
+ A        14.14 1.364 66   11.550    17.00    3  
+ B        15.03 1.406 66   12.352    17.97    3  
+ F        16.15 1.458 66   13.370    19.19    3  
+
+Confidence level used: 0.95 
+Intervals are back-transformed from the sqrt scale 
+Note: contrasts are still on the sqrt scale 
+P value adjustment: tukey method for comparing a family of 6 estimates 
+significance level used: alpha = 0.05 
+NOTE: If two or more means share the same grouping symbol,
+      then we cannot show them to be different.
+      But we also did not show them to be the same. </code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="teste-não-paramétrico" class="level2">
+<h2 class="anchored" data-anchor-id="teste-não-paramétrico">Teste Não Paramétrico</h2>
+<p>Os testes não paramétricos, também conhecidos como testes de distribuição gratuita, são aqueles baseados em certas hipóteses, mas que não possuem uma organização normal. Geralmente, contêm resultados estatísticos provenientes de suas ordenações, o que os torna mais fáceis de entender.</p>
+<section id="teste-de-kruskal-wallis" class="level3">
+<h3 class="anchored" data-anchor-id="teste-de-kruskal-wallis">Teste de Kruskal-Wallis</h3>
+<p>O teste de Kruskal-Wallis é utilizado em situações onde queremos comparar mais de dois grupos independentes, de tamanhos iguais ou não, com variável resposta quantitativa. O teste é uma alternativa quando os pressupostos necesários pelo teste F da Análise de Variância não são atendidos, tendo em vista que o teste de Kruskal-Wallis dispensa a pressuposição de normalidade e homocedasticidade.</p>
+<div class="cell" data-hash="Aula-10_cache/html/unnamed-chunk-11_c3225c50aa557da01f814c4d0fc54940">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kruskal.test</span>(count <span class="sc">~</span>spray, <span class="at">data =</span> insects)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Kruskal-Wallis rank sum test
+
+data:  count by spray
+Kruskal-Wallis chi-squared = 54.691, df = 5, p-value = 1.511e-10</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span> (agricolae)</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="fu">kruskal</span>(insects<span class="sc">$</span>count, insects<span class="sc">$</span>spray,</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">console =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Study: insects$count ~ insects$spray
+Kruskal-Wallis test's
+Ties or no Ties
+
+Critical Value: 54.69134
+Degrees of freedom: 5
+Pvalue Chisq  : 1.510845e-10 
+
+insects$spray,  means of the ranks
+
+  insects.count  r
+A      52.16667 12
+B      54.83333 12
+C      11.45833 12
+D      25.58333 12
+E      19.33333 12
+F      55.62500 12
+
+Post Hoc Analysis
+
+t-Student: 1.996564
+Alpha    : 0.05
+Minimum Significant Difference: 8.462804 
+
+Treatments with the same letter are not significantly different.
+
+  insects$count groups
+F      55.62500      a
+B      54.83333      a
+A      52.16667      a
+D      25.58333      b
+E      19.33333     bc
+C      11.45833      c</code></pre>
+</div>
+</div>
+</section>
+<section id="glm" class="level3">
+<h3 class="anchored" data-anchor-id="glm">glm</h3>
+<p>Usado para ajustar modelos lineares generalizados, especificados por meio de uma descrição simbólica do preditor linear e uma descrição da distribuição de erro.</p>
+</section>
+<section id="família" class="level3">
+<h3 class="anchored" data-anchor-id="família">Família</h3>
+<p>Os objetos de família fornecem uma maneira conveniente de especificar os detalhes dos modelos usados por funções como “glm”.</p>
+<div class="cell" data-hash="Aula-10_cache/html/unnamed-chunk-12_6293268048a27d4467bfcd77943e8035">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>glm1 <span class="ot">&lt;-</span> <span class="fu">glm</span>(count <span class="sc">~</span> spray,</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">data =</span> insects,</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">family =</span> <span class="fu">poisson</span>(<span class="at">link =</span> <span class="st">"identity"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Visualização gráfica e comparação de médias.</p>
+<div class="cell" data-hash="Aula-10_cache/html/unnamed-chunk-13_34a2dee953204fd13a5a115ff87ae457">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span> (DHARMa)</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">simulateResiduals</span>(glm1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Aula-10_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(glm1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = count ~ spray, family = poisson(link = "identity"), 
+    data = insects)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.3852  -0.8876  -0.1482   0.6063   2.6922  
+
+Coefficients:
+            Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)  14.5000     1.0992  13.191  &lt; 2e-16 ***
+sprayB        0.8333     1.5767   0.529    0.597    
+sprayC      -12.4167     1.1756 -10.562  &lt; 2e-16 ***
+sprayD       -9.5833     1.2720  -7.534 4.92e-14 ***
+sprayE      -11.0000     1.2247  -8.981  &lt; 2e-16 ***
+sprayF        2.1667     1.6116   1.344    0.179    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for poisson family taken to be 1)
+
+    Null deviance: 409.041  on 71  degrees of freedom
+Residual deviance:  98.329  on 66  degrees of freedom
+AIC: 376.59
+
+Number of Fisher Scoring iterations: 3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>glml_means <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(glm1, <span class="sc">~</span> spray)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cld</span>(glml_means)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> spray emmean    SE  df asymp.LCL asymp.UCL .group
+ C       2.08 0.417 Inf      1.27      2.90  1    
+ E       3.50 0.540 Inf      2.44      4.56  12   
+ D       4.92 0.640 Inf      3.66      6.17   2   
+ A      14.50 1.099 Inf     12.35     16.65    3  
+ B      15.33 1.130 Inf     13.12     17.55    3  
+ F      16.67 1.179 Inf     14.36     18.98    3  
+
+Confidence level used: 0.95 
+P value adjustment: tukey method for comparing a family of 6 estimates 
+significance level used: alpha = 0.05 
+NOTE: If two or more means share the same grouping symbol,
+      then we cannot show them to be different.
+      But we also did not show them to be the same. </code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="transformação-boxcox" class="level2">
+<h2 class="anchored" data-anchor-id="transformação-boxcox">Transformação BoxCox</h2>
+<p>A transformação Box-Cox é uma transformação de poder que elimina a não linearidade entre variáveis, variâncias diferentes e assimetria variável. A função boxcox do pacote MASS em R pode ser usada para estimar o parâmetro de transformação usando estimativa de máxima verossimilhança. Também receberemos o intervalo de confiança de 95% do parâmetro dessa função.Você deve calcular um modelo linear com a função lm e passá-lo para a função boxcox para determinar o “lambda” apropriado.</p>
+<div class="cell" data-hash="Aula-10_cache/html/unnamed-chunk-14_5d75df514f90c9db57fdd95b5e19b092">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span> (MASS)</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>insects</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 72 × 2
+   spray count
+   &lt;fct&gt; &lt;dbl&gt;
+ 1 A        10
+ 2 A         7
+ 3 A        20
+ 4 A        14
+ 5 A        14
+ 6 A        12
+ 7 A        10
+ 8 A        23
+ 9 A        17
+10 A        20
+# ℹ 62 more rows</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>b <span class="ot">&lt;-</span> <span class="fu">boxcox</span> (<span class="fu">lm</span>(insects<span class="sc">$</span>count<span class="fl">+0.1</span> <span class="sc">~</span> <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Aula-10_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>lambda <span class="ot">&lt;-</span> b<span class="sc">$</span>x[<span class="fu">which.max</span>(b<span class="sc">$</span>y)]</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>lambda</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.4242424</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co">#A linha vertical tracejada no meio representa o parâmetro estimado lambda hat.</span></span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>insects<span class="sc">$</span>count2 <span class="ot">&lt;-</span> (insects<span class="sc">$</span>count <span class="sc">^</span> lambda <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">/</span> lambda</span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>insects<span class="sc">$</span>count</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] 10  7 20 14 14 12 10 23 17 20 14 13 11 17 21 11 16 14 17 17 19 21  7 13  0
+[26]  1  7  2  3  1  2  1  3  0  1  4  3  5 12  6  4  3  5  5  5  5  2  4  3  5
+[51]  3  5  3  6  1  1  3  2  6  4 11  9 15 22 15 16 13 10 26 26 24 13</code></pre>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

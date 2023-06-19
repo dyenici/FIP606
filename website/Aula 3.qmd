@@ -1,0 +1,80 @@
+---
+title: "Importação de dados"
+format: html
+---
+Os dados que serão trabalhados no R podem vir de diversos bancos de dados, abaixo serão mostradas as formas de importar as informações de alguns desses bancos.
+
+## De pacotes do R
+O próprio R possui uma base de dados e é possível importar e trabalhar com essas informações.
+Abaixo o conjunto de dados chamado "cars".
+
+```{r}
+cars
+cars2 <- cars
+speed <- cars2$speed
+speed
+
+#Atribuindo "cars" a "cars2" um data frame é criado, e é a partir dele que o trabalho começa.
+
+```
+
+Ou então a importação de dados pode vir de algum pacote, como é o caso do conjunto "RustSoybean", que pertence ao pacote "r4pde".
+
+```{r}
+# Não esquecer de carregar o pacote onde os dados de interesse estão.
+
+library (r4pde)
+df <- RustSoybean
+df
+```
+
+## De planilhas do Excel
+É comum também que os dados estejam dispostos em planilhas do Excel. Para importar os dados desse tipo de arquivo, existe um pacote específico no R.
+
+```{r}
+library (readxl)
+
+#Nesse primeiro caso, todos os dados, de todas as abas da planilha serão carregado no R.
+magnesio <- read_excel ("dados-diversos.xlsx")
+
+#Já no segundo caso, ao inserir o nome da planilha de interesse e na sua frente o número ou nome da aba específica que será trabalhada, apenas o dados daquela aba serão importados.
+escala <- read_excel ("dados-diversos.xlsx", 2)
+escala2 <- read_excel ("dados-diversos.xlsx", "escala")
+```
+
+## De arquivos CSV
+Ainda é possível importar dados que são trabalhados no software do Excel, mas que apresentam um formato diferente do padrão "xlsx".
+
+```{r}
+library (tidyverse)
+
+magnesio2 <- read.csv ("dados-diversos.csv")
+magnesio3 <- read_csv ("dados-diversos.csv")
+magnesio3
+
+```
+
+## De arquivos txt
+Documentos de texto padrão.
+
+```{r}
+magnesio4 <- read.table ("dados-diversos.txt", header = TRUE)
+```
+
+## Do Google Sheet
+Planilhas on-line disponíveis no Google Sheet.
+
+```{r}
+library (gsheet)
+
+magnesio5 <- gsheet2tbl ("https://docs.google.com/spreadsheets/d/1aID5Dh6PlBVCKzU1j7k-WA6zuWQWE2NhtWEgdJtt5iA/edit?usp=sharing")
+
+survey <- gsheet2tbl("https://docs.google.com/spreadsheets/d/1aID5Dh6PlBVCKzU1j7k-WA6zuWQWE2NhtWEgdJtt5iA/edit#gid=366054269")
+ 
+fusarium <- read.csv ("https://raw.githubusercontent.com/emdelponte/epidemiology-R/main/data/fusarium_banana.csv")
+
+fusarium
+
+
+library (googlesheets4)
+```

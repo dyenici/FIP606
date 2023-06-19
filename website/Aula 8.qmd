@@ -1,0 +1,57 @@
+---
+title: "Teste t"
+format: html
+---
+
+Trabalhando um conjunto de dados e aplicando o "Teste t".
+Hipótese para o conjunto de dados: Magnésio é benéfico para a planta. Reduz o tamanho da lesão.
+
+```{r}
+warning(FALSE)
+
+library (tidyverse)
+library (readxl)
+
+magnesio <- read_excel ("dados-diversos.xlsx")
+
+magnesio |> ggplot(aes(trat, comp))+
+  geom_jitter(width = 0.05)+
+  geom_boxplot(fill = NA,
+               outlier.colour = NA)+
+  ylim (5,20)+
+  annotate(geom = "text", x = 0.7,
+           y = 19, label = "t = 8.15; P < 0.001")
+
+```
+
+```{r}
+mg2 <- magnesio |> 
+  pivot_wider(id_cols = 1,
+              names_from = trat,
+              values_from = comp)
+
+```
+
+## Teste T
+O teste t compara duas médias e mostra se as diferenças entre essas médias são significativas. A necessidade de determinar se duas médias de amostras são diferentes entre si é uma situação extremamente frequente em pesquisas científicas.Como todo teste estatístico, o teste t também tem como produto a medida do p valor. Ou seja, calculamos a probabilidade da diferença encontrada (entre as médias) terem sido por acaso.
+
+```{r}
+t <- t.test(mg2$Mg2, mg2$Ctrl)
+
+# Se p valor for menor que 5% ( p < 0.05), a tradição científica é de rejeitarmos a hipótese de que as diferenças sejam por acaso (rejeitamos a hipótese nula) e alegamos termos encontrado uma diferença estatísticamente significativa.
+
+library(report)
+report(t)
+
+#Pacote "report" -> Este pacote converte modelos estatísticos e quadros de dados em relatórios textuais adequados para publicação, garantindo padronização e qualidade na apresentação de resultados.
+```
+
+```{r}
+magnesio |> ggplot(aes(trat, comp))+
+  stat_summary(fun.data = "mean_se")+
+  annotate(geom = "text", x = 0.7,
+           y = 19, label = "t = 8.15; P < 0.001")
+
+#Os números de x e y são as coordenadas de onde ficaram meus dados.
+```
+

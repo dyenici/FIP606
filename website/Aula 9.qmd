@@ -1,0 +1,246 @@
+---
+title: "Testes paramétricos e não paramétricos"
+format: html
+---
+
+## Introdução
+
+Nesta seção trataremos de formas de analisar dados em experimentos onde as causas da variação na resposta são controladas o máximo possível e o erro experimental minimizado. Veremos os tipos de análise de acordo com o número e tipo de variáveis independentes (níveis do fator) e também o número de tratamentos ou grupos a serem comparados. Iniciaremos primeiramente com os casos mais simples quanto ao número de grupos e iremos avançando conforme aumentamos a complexidade do experimento bem com algumas variações possíveis quanto ao número e tipo de variáveis resposta de interesse.
+
+### Dois tratamentos independentes
+
+Um pesquisador conduziu um experimento com o objetivo de avaliar o efeito de um micronutriente, o magnésio (Mg), adicionado na solução do solo cultivado com plantas de arroz, no manejo de uma doença fúngica. O experimento foi conduzido em delineamento inteiramente casualizado com 10 repetições, sendo cada repetição um vaso de planta. Um dos tratamentos é o chamado controle, ou testemunha, sem o suplemento mineral. O segundo é aquele com o suplemento do Mg na dose de 2 mM. Em cada uma das repetições foi obtido um valor médio do comprimento de lesões em um determinado tempo após a inoculação.
+
+### Preparo pré-análise
+
+```{r}
+library(magrittr) # para usar pipes
+library(ggplot2) # para gráficos
+library(dplyr)
+library(readxl)
+library(tidyr)
+```
+
+```{r}
+data_mg <- read_excel("dados-diversos.xlsx")
+head(data_mg)
+```
+
+A maneira mais simples é visualizar, no caso de mais de 6 repetições, usando boxplots juntamente com os dados de cada repetição.
+
+```{r}
+data_mg |> 
+  ggplot(aes(trat, comp)) +
+  geom_boxplot(outlier.color = NA) +
+  geom_jitter(width = 0.1, shape = 1)
+```
+
+Vamos obter estatísticas que descrevem o conjunto, seja a tendência central ou a dispersão dos dados. No caso, será a média, variância, desvio padrão, erro padrão e intervalo de confiança - esse último para inferência visual.
+
+```{r}
+dat2 <- data_mg |> 
+  group_by(trat) |> 
+  summarise(mean_comp = mean(comp),
+    sd_comp = sd(comp),
+    var_comp = var(comp),
+    n = n(),
+    se_comp = sd_comp / sqrt(n - 1),
+    ci = se_comp * qt(0.025, df = 9) # paramétrico
+  )
+dat2
+```
+
+Já podemos visualizar os dados com as estatísticas calculadas. Abaixo, as barras verticais represntam o intervalo de confiança 95%.
+
+```{r}
+dat2 %>%
+  ggplot(aes(trat, mean_comp)) +
+  geom_jitter(
+    data = data_mg, aes(trat, comp),
+    color = "grey",
+    width = 0.05
+  ) +
+  geom_errorbar(aes(
+    ymin = mean_comp - ci,
+    ymax = mean_comp + ci
+  ),
+  width = 0.05
+  ) +
+  geom_point(size = 3)
+```
+
+O conjunto está no formato largo, assim a variável resposta de interesse está apenas em uma coluna. Existem várias formas de separar em dois vetores os dados de resposta para cada tratamento. Uma delas é por meio da função `spread` do pacote `tidyr`, a qual coloca as respostas em duas colunas, uma para cada tratamento. Vamos criar o conjunto `data_mg2`.
+
+```{r}
+data_mg2 <- data_mg %>%
+  spread(trat, comp)
+data_mg2
+```
+
+## Análise inferencial
+Usando o conjunto original, vamos visualizar as respostas (tamanho da lesão) para cada tratamento, já que O `ggplot2` requer os dados no formato largo.
+
+```{r}
+# usando pipes
+data_mg %>%
+  ggplot(aes(trat, comp)) +
+  geom_jitter(width = 0.1, height = 0) +
+  ylim(5, 20) # ajusta o eixo y para melhor visualização
+```
+
+### Homocedasticidade
+No caso de dois grupos, a função que pode ser usada é a `var.test` do R. Vamos usar o formato largo e chamar os dois vetores do conjunto. Verifique o P-valor na saída da análise.
+
+```{r}
+attach(data_mg2) # vamos facilitar o uso dos vetores
+var.test(Mg2, Ctrl)
+
+```
+
+### Normalidade
+A normalidade pode ser testada por meio de procedimentos visuais e testes específicos.
+
+```{r}
+shapiro.test(Mg2)
+shapiro.test(Ctrl)
+```
+
+Análise visual da premissa de normalidade.
+
+```{r}
+qqnorm(Mg2)
+qqline(Mg2)
+qqnorm(Ctrl)
+qqline(Ctrl)
+```
+
+```{r}
+
+magnesio3 <- data_mg %>%
+  group_by(trat) %>%
+  summarize(
+    mu = mean(comp),
+    sd = sd(comp),
+    n = length(comp),
+    se = sd / sqrt(n),
+    ciu = mu + (qt(0.025, df = n - 1) * se),
+    cil = mu - (qt(0.025, df = n - 1) * se)
+  )
+```
+
+### Intervalo de confiança
+
+```{r}
+magnesio3 %>%
+  ggplot(aes(trat, mu, color = trat)) +
+  geom_point(size = 3) +
+  ylim(7,20)+
+  geom_errorbar(aes(min = cil, max = ciu), width = 0.05, size = 1) +
+  labs(x = "Tratamento", y = "Valor", title = "Magnesium effect on lesion expansion")
+```
+
+### Teste de hipótese
+
+```{r}
+
+t.test(Mg2, Ctrl, paired = F)
+```
+
+### Alternativas
+Se as premissas de normalidade não fossem atendidas, qual o teste que poderia ser usado? Nesse caso de dois grupos há duas possibilidades, uma é usar um teste não paramétrico ou um teste baseado em reamostragem (bootstrapping) dos dados, os quais independem do modelo de distribuição.
+
+Usando os mesmos dados podemos notar que o resultado é idêntico porém com P-valores diferentes.
+
+# Dois tratamentos dependentes
+Um experimento foi conduzido para avaliar o efeito do uso da escala na acurácia e precisão de avaliações visuais de severidade por avaliadores. A hipótese a ser testada foi que avaliações utilizando uma escala digramática como auxílio são mais acuradas do que sem o uso do auxílio. Dez avaliadores foram escolhidos aleatoriamente e fizeram duas avaliações cada. Cinco variáveis que compõe a medida da concordância das estimativas foram obtidas. Uma vez que as medidas foram repetidas no tempo para cada avaliador, as amostras são do tipo dependentes.
+
+## Preparo pré-análise
+
+```{r}
+escala <- read_excel("dados-diversos.xlsx", "escala")
+head(escala)
+```
+
+```{r}
+escala %>%
+  gather(component, statistics, 3:7) %>% # formato longo
+  ggplot(aes(reorder(assessment, statistics), statistics)) +
+  geom_jitter(width = 0.05) +
+  facet_wrap(~component, scales = "free_y")
+```
+
+Prepara os dados para análise. Cria os vetores de cada grupo para cada variável. Vamos fazer abaixo para acurácia.
+
+```{r}
+# arruma os dados
+escala2 <- select(escala, assessment, rater, acuracia)
+escala3 <- spread(escala2, assessment, acuracia)
+```
+
+### Premissas
+
+```{r}
+
+## homocedasticidade dois grupos
+attach(escala3)
+var.test(Aided1, Unaided)
+
+## normalidade
+shapiro.test(Aided1)$p.value
+shapiro.test(Unaided)$p.value
+qqnorm(Aided1)
+qqline(Aided1)
+qqnorm(Unaided)
+qqline(Unaided)
+```
+
+### Análise inferencial
+
+```{r}
+escala4 <- summarize(group_by(escala2, assessment),
+  mu = mean(acuracia),
+  sd = sd(acuracia),
+  n = length(acuracia),
+  se = sd / sqrt(n),
+  ciu = mu + (qt(0.025, df = n - 1) * se),
+  cil = mu - (qt(0.025, df = n - 1) * se)
+)
+```
+
+Visualiza média e intervalo de confiança
+
+```{r}
+ggplot(escala4, aes(assessment, mu)) +
+  geom_point(stat = "identity", size = 4) +
+  geom_errorbar(aes(min = cil, max = ciu),
+    width = .05
+  )
+```
+
+Visualiza cada avaliador
+
+```{r}
+ggplot(escala2, aes(reorder(assessment, acuracia), acuracia, group = rater)) + geom_point(stat = "identity", size = 3, shape = 1) +
+  geom_line(size = 1, color = "gray70") + facet_wrap(~rater, nrow = 5)
+```
+
+### Teste t paramétrico
+Note que as amostras são pareadas - mesmo avaliador em dois tempos, portanto há dependência.
+
+```{r}
+## teste t para amostras pareadas
+t_escala <- t.test(escala3$Aided1, escala3$Unaided,
+  paired = TRUE,
+  var.equal = F
+)
+
+t_escala
+```
+
+## Teste não paramétrico
+### wilcox. test
+O teste T de Wilcoxon substitui o t de Student para amostras pareadas quando os dados não satisfazem as exigências deste último. Foi também desenvolvido por F. Wilcoxon em 1945 e baseia-se nos postos das diferenças intrapares. O teste de Wilcoxon (Wilcoxon Matched-Pairs; Wilcoxon signed-ranks test) é um método não-paramétrico para comparação de duas amostras pareadas. A princípio são calculados os valores numéricos da diferença entre cada par, sendo possível três condições: aumento (+), diminuição (-) ou igualdade (=). Uma vez calculadas todas as diferenças entre os valores obtidos para cada par de dados, essas diferenças são ordenadas pelo seu valor absoluto (sem considerar o sinal), substituindo-se então os valores originais pelo posto que ocupam na escala ordenada. O teste da hipótese de igualdade entre os grupos é baseado na soma dos postos das diferenças negativas e positivas.
+
+```{r}
+wilcox.test(escala3$Aided1, escala3$Unaided, paired = TRUE)
+```

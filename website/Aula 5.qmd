@@ -1,0 +1,174 @@
+---
+title: "Gráficos em ggplot - parte 2"
+format: html
+---
+
+Continuando a aula antetior sobre a construção de gráficos em ggplot, nessa aula veremos alguns outros modelos de gráficos disponíveis no pacote "ggplot2()".
+
+```{r}
+warning(FALSE)
+
+library (tidyverse)
+library (readxl)
+
+mg <- read_excel("dados-diversos.xlsx")
+```
+
+## Visualização de dados em gráficos
+
+```{r}
+mg |> ggplot (aes(trat,comp))+
+  geom_boxplot(outlier.color = NA,
+               fill = "yellow",
+               size = 0.5,
+               width = 0.2) +
+  geom_jitter(width = 0.15,
+              height = 0,
+              size = 2,
+              color = "black") +
+  scale_y_continuous(limits = c(7,19), n.breaks = 6) +
+  labs (y = "Lesion Size (mm)", x = "") +
+  theme_minimal()
+
+#Nesse caso a função "ggsave()" está, além de salvando a imagem em ".png", criando uma pasta chamada "figuras", onde as imagens serão salvas.
+
+ggsave ("figuras/plot2.png", bg = "white")
+```
+
+```{r}
+mg |> 
+  group_by (trat) |> 
+  summarise(comp_mean = mean (comp), comp_sd = sd (comp)) |> 
+  ggplot (aes(trat, comp_mean)) +
+  geom_col (fill = "purple",
+            width = 0.3,
+            color = "black") +
+   scale_y_continuous(limits = c(0,20), n.breaks = 6) +
+  geom_errorbar(aes(ymin = comp_mean , 
+                    ymax = comp_mean + comp_sd,
+                    width = 0))
+```
+
+```{r}
+p_box = mg |> 
+  group_by (trat) |> 
+  summarise(comp_mean = mean (comp), comp_sd = sd (comp)) |> 
+  ggplot (aes(trat, comp_mean)) +
+  geom_col (fill = "purple",
+            width = 0.3,
+            color = "black") +
+  geom_point ()+
+   scale_y_continuous(limits = c(0,20), n.breaks = 6) +
+  geom_errorbar(aes(ymin = comp_mean - comp_sd , 
+                    ymax = comp_mean + comp_sd,
+                    width = 0.05)) +
+  labs (y = "Lesion Size (mm)", x = "")
+
+p_box
+```
+
+```{r}
+mg |> 
+  group_by (trat) |> 
+  summarise(comp_mean = mean (comp),
+            comp_sd = sd (comp)) |> 
+  ggplot (aes(trat, comp_mean)) +
+  geom_point ()+
+   scale_y_continuous(limits = c(0,20), n.breaks = 6) +
+  geom_errorbar(aes(ymin = comp_mean - comp_sd , 
+                    ymax = comp_mean + comp_sd,
+                    width = 0.05)) +
+  theme_minimal() +
+  labs (y = "Lesion Size (mm)", x = "")
+
+ggsave ("figuras/plot2.2.png", bg = "white", 
+        width = 4, 
+        height = 4)
+```
+
+```{r}
+p_means = mg |> 
+  group_by (trat) |> 
+  summarise(comp_mean = mean (comp),
+            comp_sd = sd (comp)) |> 
+  ggplot (aes(trat, comp_mean)) +
+  geom_point ()+
+   scale_y_continuous(limits = c(0,20), n.breaks = 6) +
+  geom_errorbar(aes(ymin = comp_mean - comp_sd , 
+                    ymax = comp_mean + comp_sd,
+                    width = 0.05)) +
+  theme_minimal() +
+  labs (y = "Lesion Size (mm)", x = "")
+
+p_means
+```
+
+## Comparação de dois gráficos
+
+Com o pacote "patchwork" é possível combinar ggplots separados em um mesmo gráfico.
+
+```{r}
+library (patchwork)
+
+p_box | p_means
+```
+
+```{r}
+library (patchwork)
+
+p_box / p_means
+```
+
+```{r}
+library (patchwork)
+
+(p_box | p_means) +
+  plot_annotation(tag_levels = "A",
+                  title = "Graphics that impress")
+
+#O "plot_annotation()" adiciona ao seu "patchwork" informações úteis como títulos, legendas, fonte, etc.
+
+ggsave ("figuras/combined.png")
+```
+
+```{r}
+survey <- read_excel("dados-diversos.xlsx", sheet = "survey")
+
+survey |> 
+  filter (state == "RS") |> 
+  count (species) |> 
+  ggplot(aes(species, n)) +
+  geom_col(width = 0.3,
+           fill = "darkblue",
+           color = "black") +
+  coord_flip () +
+  labs (x = "", y = "Number of isolates", 
+        title = "Graphics that impress",
+        subtitle = "I made it") +
+  theme_classic()
+
+#A função "coord_flip()" cria gráficos horizontais.
+
+ggsave ("figuras/barplot.png", bg = "white")
+```
+
+```{r}
+survey <- read_excel("dados-diversos.xlsx", sheet = "survey")
+
+survey |> 
+  filter (state == "RS") |> 
+  count (species, residue) |> 
+  ggplot(aes(species, n)) +
+  geom_col(width = 0.3,
+           fill = "darkblue",
+           color = "black") +
+  coord_flip () +
+  facet_wrap(~residue, ncol = 1) +
+  labs (x = "", y = "Number of isolates", 
+        title = "Graphics that impress",
+        subtitle = "I made it") +
+  theme_bw()
+
+ggsave ("figuras/barplot2.png", bg = "white")
+```
+

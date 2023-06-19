@@ -1,0 +1,147 @@
+---
+title: "Comparação de Frequência"
+format: html
+---
+
+## Comparação de frequência
+
+```{r}
+library(tidyverse)
+library(readxl)
+
+survey <- read_excel("dados-diversos.xlsx","survey")
+
+library(janitor)
+
+survey |> 
+  tabyl (year, species) |> 
+  adorn_percentages()
+
+```
+
+## Gráfico de barras - frequência
+
+```{r}
+survey |> 
+  filter(residue != "NA") |> 
+  count (residue, species) |> 
+  ggplot(aes(residue, n, fill = species))+
+  geom_col()
+```
+
+## Frequência de classe
+
+### chisq.test
+Realiza testes de tabela de contingência qui-quadrado e testes de qualidade de ajuste.
+
+```{r}
+q <- table (survey$residue, survey$species)
+chisq.test(q)
+```
+
+## Para frequências mais baixas
+
+### fisher.test
+Executa o teste exato de Fisher para testar o nulo de independência de linhas e colunas em uma tabela de contingência com marginais fixos.
+
+```{r}
+fisher.test(q)
+
+q <- table (survey$residue, survey$inc_class)
+chisq.test(q)
+
+survey |> 
+  filter(residue != "NA") |> 
+  count (residue, inc_class) |> 
+  ggplot(aes(residue, n, fill = inc_class))+
+  geom_col()
+
+#Dados de levantamento - variável categórica nominal
+```
+
+## Cruzamento entre variáveis
+
+```{r}
+survey |> count (year)
+#Frequência de ocorrência por ano
+
+table (survey$year, survey$species)
+```
+
+
+```{r}
+curve <- read_excel("dados-diversos.xlsx","curve")
+
+curve2 <- curve |> 
+  group_by(Irrigation, day) |> 
+  summarise(mean_severity = mean (severity),
+            sd_severity = sd(severity))
+
+curve2 |> ggplot(aes(day,mean_severity, color=Irrigation))+
+  geom_point()+
+  geom_line()
+
+curve2 |> ggplot(aes(day,mean_severity, color=Irrigation))+
+  geom_point()+
+  geom_errorbar(aes(ymin=mean_severity - sd_severity,
+                    ymax = mean_severity + sd_severity),
+                width = 0.1)+
+  geom_line()
+
+library(epifitter)
+
+curve3 <- curve |> 
+  group_by(Irrigation, rep) |> 
+  summarise(audpc = AUDPC(day, severity,
+                          y_proportion = F)) |> 
+  pivot_wider(1, names_from = Irrigation,
+            values_from = audpc)
+
+t.test(curve3$Drip, curve$Furrow)
+
+```
+
+```{r}
+library(gsheet)
+
+tw <- gsheet2tbl("https://docs.google.com/spreadsheets/d/1t5xftb0xSRPNFhM7h_MiPNtwt2UFUcm9/edit#gid=1594889893")
+tw |> 
+  group_by(cult,silicio,hai) |> 
+  summarise (mean_lesion = mean (as.numeric(lesion_size)),
+             sd_lesion = sd(lesion_size)) |> 
+  ggplot(aes(hai,mean_lesion, color = silicio))+
+  geom_line()+
+  geom_point()+
+  geom_errorbar(aes(ymin=mean_lesion - sd_lesion,
+                    ymax = mean_lesion + sd_lesion),
+                width = 0.1)+
+  facet_wrap(~cult)+
+   labs (y = "Lesion size (mm)", x = "Hours after inoculation")+
+  ggthemes::theme_few()+
+  scale_color_grey()
+
+library(agricolae)
+
+tw2 <- tw |>
+  group_by(exp,cult,silicio,rep) |> 
+  summarise(audpc=audpc(lesion_size, hai)) |> 
+  filter (audpc > 0)
+
+tw2 |> 
+  ggplot(aes(cult,audpc, color = silicio))+
+  geom_boxplot()+
+  facet_wrap(~ exp)
+
+```
+
+```{r}
+aov1 <- aov(sqrt(audpc) ~exp*cult*silicio, data = tw2)
+summary(aov1)
+library(performance)
+check_normality(aov1)
+check_heteroscedasticity(aov1)
+
+library(emmeans)
+m1 <- emmeans (aov1, ~cult | silicio, type = "response")
+```
+

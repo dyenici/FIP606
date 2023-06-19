@@ -1,0 +1,76 @@
+---
+title: "Construindo Mapas no R"
+format: html
+---
+
+```{r}
+#remotes::install_github("ropensci/rnaturalearthhires")
+
+library(rnaturalearth)
+library(rnaturalearthhires)
+library(r4pde)
+library(tidyr)
+
+sbr <- RustSoybean
+sbr2 <- sbr|> separate (planting, into = c("year","month", "day"), sep= "-",
+           remove= FALSE)
+```
+
+```{r}
+BRA <- ne_countries(country= "Brazil",
+                    returnclass= "sf")
+
+library(tidyverse)
+
+ggplot(BRA)+
+  geom_sf(color= "white",
+          fill = "darkgreen")+
+  theme_classic()
+```
+
+```{r}
+BRA <- ne_states(country= "Brazil",
+                    returnclass= "sf")
+MG <- BRA |> filter(name_en == "Minas Gerais")
+
+library(tidyverse)
+library(ggsn)
+
+ggplot(BRA)+
+  geom_sf(color= "black",
+          fill = "white")+
+  geom_sf(data= MG, color = "black", fill= "darkblue")+
+  geom_point(data=sbr, aes(longitude,latitude), alpha = 0.5)
+  theme_void()
+```
+
+```{r}
+ggplot(BRA)+
+  #annotation_north_arrow (location = "bl",
+                          #style = north_arrow_nautical())+
+  #annotation_scale(location="br")+
+  geom_sf(color= "black",
+          fill = "white")+
+  geom_point(data=sbr2, aes(longitude,latitude, color= year, 
+                            size = severity), alpha = 0.5)+
+  geom_hline(yintercept = -23, linetype= "dashed", color = "black")+
+  theme_minimal()+
+    labs(color = "Planting Year")+
+    theme(legend.position = "right")
+  facet_wrap(~year)
+```
+
+```{r}
+library(sf)
+shapefile <- st_read("malha/BR_Municipios_2022.shp")
+
+ggplot(BRA)+
+  geom_sf(data = shapefile)
+
+```
+
+```{r}
+ggplot(BRA)+
+  geom_sf(data = shapefile, color = "black", fill = "darkgreen")+
+  geom_sf(data= MG, color = "black", fill= "darkblue")
+```

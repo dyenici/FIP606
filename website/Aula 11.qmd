@@ -1,0 +1,146 @@
+---
+title: "ANOVA Fatorial"
+format: html
+---
+## ANOVA Fatorial
+ANOVA fatorial é usada quando há duas ou mais variáveis independentes. Cada um desses fatores pode ter vários níveis. ANOVA fatorial só pode ser usado no caso de um experimento fatorial completo, onde há uso de todas as permutações possíveis de fatores e seus níveis. Esta ANOVA não mede apenas a variável independente versus a independente, mas se os dois fatores afetam um ao outro. 
+
+```{r}
+
+# Análise exploratória
+
+library(readxl)
+library(tidyverse)
+
+dat <- read_excel("dados-diversos.xlsx", "fungicida_vaso")
+
+dat2 <- dat |> 
+  mutate(inc = dis_sp/n_sp*100)
+
+# mutate()cria novas colunas que são funções de variáveis existentes. Essa função também pode modificar (se o nome for o mesmo de uma coluna existente) e excluir colunas (configurando seu valor como NULL).
+
+dat2 |> 
+  ggplot(aes(x=treat,
+             y=inc)) +
+  geom_jitter(width = 0.1) +
+  facet_wrap(~ dose)
+```
+
+Aplicação de ANOVA
+
+```{r}
+m1 <- aov(inc ~ treat*dose,
+          data = dat2)
+summary(m1)
+
+library(performance)
+check_normality(m1)
+check_heteroscedasticity(m1)
+
+library(DHARMa)
+plot(simulateResiduals(m1))
+
+```
+
+Os dados não apresentam normalidade e homocedasticidade, partimos para a transformação.
+
+```{r}
+m2 <- aov(log(inc+0.5) ~ treat*dose,
+          data = dat2)
+
+library(performance)
+check_normality(m2)
+check_heteroscedasticity(m2)
+
+library(DHARMa)
+plot(simulateResiduals(m2))
+```
+
+"Response": trabalho com meus dados sem transformação.
+
+```{r}
+
+# Comparação de médias "Tratamento em função da Dose"
+
+library(emmeans)
+means_m2 <- emmeans (m2, ~treat|dose,
+                     type="response")
+means_m2
+
+library(multcomp)
+library(multcompView)
+cld(means_m2)
+
+```
+
+```{r}
+# Comparação de médias "Dose em função do Tratamento"
+
+library(emmeans)
+means_m2 <- emmeans (m2, ~dose|treat,
+                     type="response")
+means_m2
+
+library(multcomp)
+library(multcompView)
+cld(means_m2)
+```
+
+### cv.model
+Obtém o coeficiente de variação do experimento obtido pelos modelos lm() ou aov().
+
+```{r}
+library(agricolae)
+cv.model(m2)
+```
+
+Outro exemplo:
+
+```{r}
+milho <- read_excel("dados-diversos.xlsx", "armazena")
+milho |> 
+  filter(tempo==8) |> 
+  ggplot(aes(factor(tipo),
+             peso_mil,
+             color=factor(umidade)))+
+  geom_jitter(width = 0.1)+
+  facet_wrap(~umidade)
+```
+
+```{r}
+milho2 <- milho |> 
+  filter(tempo==8)
+
+m2 <- aov(peso_mil~factor(tipo)
+          *factor(umidade), 
+          data=milho2)
+summary(m2)
+          
+```
+
+```{r}
+milho3 <- read_excel("dados-diversos.xlsx", "milho")
+
+m4 <- aov(yield~hybrid*method,
+          data=milho3)
+summary(m4)
+plot(simulateResiduals(m4))
+```
+
+### pwpm
+Esta função apresenta resultados "emmeans" e comparações aos pares de forma compacta. Ele exibe uma matriz (ou matrizes) de estimativas, diferenças pareadas e valores de P.
+
+```{r}
+milho3 <- read_excel("dados-diversos.xlsx", "milho")
+
+m4 <- aov(yield~hybrid,
+          data=milho3)
+summary(m4)
+check_heteroscedasticity(m4)
+medias_m4 <- emmeans(m4,~hybrid)
+medias_m4
+cld(medias_m4)
+pwpm(medias_m4)
+pwpp(medias_m4)
+```
+

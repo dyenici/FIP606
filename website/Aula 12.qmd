@@ -1,0 +1,120 @@
+---
+title: "ANOVA com bloco"
+format: html
+---
+
+```{r}
+warning(FALSE)
+
+library(readxl)
+library(tidyverse)
+
+fungicidas <- read_excel("dados-diversos.xlsx", "fungicida_campo")
+```
+
+## Delineamenrto em Blocos Casualizado
+O delineamento em blocos casualizado (DBC) envolve os três princípios da experimentação: repetição, casualização e controle local. Neste caso, as condições locais não são homogêneas e podem ter efeito significativo sobre os tratamentos.
+
+Com o seguinte banco de dados é possível realizar a análise de variância (ANOVA) e testar as hipóteses sobre os tratamentos e blocos.
+
+```{r}
+aov_fung <- aov(sev~trat+rep,data=
+                  fungicidas)
+summary(aov_fung)
+
+# Mesmo sem significância, o bloco deve permanecer, pois o experimento foi montado em blocos.
+```
+
+Checando as premissas e comparando as médias.
+
+```{r}
+library(performance)
+library(DHARMa)
+
+check_normality(aov_fung)
+check_heteroscedasticity(aov_fung)
+plot(simulateResiduals(aov_fung))
+
+library(emmeans)
+
+means_fung <- emmeans(aov_fung, ~trat)
+library(multcomp)
+library(multcompView)
+
+cld(means_fung)
+
+plot(means_fung)+
+  coord_flip()+
+  theme_minimal()
+```
+
+### Trabalhando com parcela e subparcela
+
+```{r}
+#Os híbridos são minha parcela, o método minha subparcela.
+
+milho <- read_excel("dados-diversos.xlsx", "milho")
+
+aov_milho_bloco <- aov(index~factor(block)+hybrid*method+
+                         Error(factor(block)/hybrid/method), data=milho)
+
+# Método está dentro de híbrido, e os híbridos estão dentro do bloco.
+
+summary(aov_milho_bloco)
+
+```
+
+## Atualizando os blocos para fatores
+### Pacote "lme4"
+Ajustar modelos de efeitos mistos lineares e lineares generalizados. Os modelos e seus componentes são representados usando classes e métodos S4.
+
+### Função "lmer"
+Gerar um componente aleatório que é específico a cada indivíduo, de modo que podemos ter, para cada um, um intercepto e uma inclinação distintas. 
+
+```{r}
+library(lme4)
+
+milho$block <- as.factor(milho$block)
+mix2 <- lmer(index~block+hybrid*method+
+               (1|block/hybrid), data=milho)
+anova(mix2)
+check_normality(mix2)
+check_heteroscedasticity(mix2)
+
+#anova com letra "a" não aparece p valor.
+```
+
+```{r}
+#Anova com "A" é outra função - nessa aparece o p valor - associada ao pacote "car"
+
+milho$block <- as.factor(milho$block)
+mix2 <- lmer(index~block+hybrid*method+
+               (1|block/hybrid), data=milho)
+library(car)
+Anova(mix2)
+check_normality(mix2)
+check_heteroscedasticity(mix2)
+```
+
+```{r}
+milho$block <- as.factor(milho$block)
+mix2 <- lmer(sqrt(index)~block+hybrid*method+
+               (1|block/hybrid), data=milho)
+library(car)
+Anova(mix2)
+check_normality(mix2)
+check_heteroscedasticity(mix2)
+```
+
+```{r}
+means_mix2 <- emmeans (mix2, ~hybrid|method)
+means_mix2
+cld(means_mix2)
+```
+
+```{r}
+means_mix2 <- emmeans (mix2, ~method|hybrid)
+means_mix2
+cld(means_mix2)
+```
+

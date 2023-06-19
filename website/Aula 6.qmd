@@ -1,0 +1,128 @@
+---
+title: "Gráficos de dispersão e Histogramas"
+format: html
+---
+
+```{r}
+library (tidyverse)
+library (readxl)
+
+fungicida <- read_excel("dados-diversos.xlsx", 6)
+```
+
+## Gráficos de dispersão
+
+O gráfico de dispersão é uma ferramenta bastante usada em estatística para visualizar a relação entre duas variáveis quantitativas. Ao plotar os pontos no gráfico, é possível detectar padrões e tendências nos dados, além de identificar possíveis correlações entre as variáveis.
+
+```{r}
+
+fungicida |> 
+  ggplot(aes(trat, sev))+
+  geom_jitter(width = 0.1,
+              color = "gray20")+
+  stat_summary(fun = mean,
+               color = "blue")
+```
+
+```{r}
+fungicida |> 
+  ggplot(aes(trat, sev))+
+  geom_jitter(width = 0.1,
+              color = "gray20")+
+  stat_summary(fun.data = mean_se,
+               color = "blue")
+```
+
+```{r}
+fungicida |> 
+  ggplot(aes(sev, yld, 
+             color = trat,
+             size = yld))+
+  geom_point()
+```
+
+```{r}
+fungicida |> ggplot(aes(sev, yld, 
+                        color = trat))+
+  geom_point(size = 3)
+```
+
+```{r}
+fungicida |> ggplot(aes(sev, yld))+
+  geom_point(size = 2)+
+  geom_smooth(method = "lm")
+```
+
+```{r}
+fungicida |> ggplot(aes(sev, yld))+
+  geom_point(size = 2,
+             color = "gray20")+
+  geom_smooth(method = "lm",
+              se = FALSE,
+              color = "blue",
+              linetype = 2,
+              size = 1)
+```
+
+```{r}
+milho <- read_excel ("dados-diversos.xlsx", 10)
+
+milho |> ggplot (aes(method, index, color = method))+
+  geom_jitter(width = 0.1)+
+  facet_wrap(~ hybrid)
+```
+
+```{r}
+milho <- read_excel ("dados-diversos.xlsx", 10)
+
+milho |> ggplot (aes(hybrid, yield, color = method))+
+  geom_jitter(width = 0.1)
+```
+
+## Histogramas
+
+O histograma consiste numa representação gráfica de dados que são divididos em classes. Assim, esta representação gráfica é feita com o objetivo de conferir como um processo se comporta em relação a suas especificidades.
+
+```{r}
+y = milho |> ggplot(aes(x= yield)) + 
+  geom_histogram(bins = 10,
+                 fill = "lightblue",
+                 color = "black")
+```
+
+```{r}
+i = milho |> ggplot(aes(x= index)) + 
+  geom_histogram(bins = 10,
+                 fill = "lightblue",
+                 color = "black")
+
+```
+
+```{r}
+library(patchwork)
+
+(y | i) +
+plot_annotation(tag_levels = "A",
+                title = "Corn = yield and index",
+                subtitle = "D. Rodrigues")
+
+ggsave ("figuras/milho.png", bg = "white",
+         width = 6, 
+        height = 4)
+```
+
+```{r}
+milho |> ggplot(aes(x=yield))+
+  geom_density()
+```
+
+```{r}
+insect <- read_excel("dados-diversos.xlsx", "mortalidade")
+
+insect |> 
+  pivot_longer(2:3, names_to = "status",
+               values_to = "value") |> 
+  ggplot (aes(inseticida, value,
+              fill = status)) + geom_col()
+```
+
