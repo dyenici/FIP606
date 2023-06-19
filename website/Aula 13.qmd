@@ -4,12 +4,15 @@ format: html
 ---
 
 ## Análise de Regressão
+
 Análise de regressão é uma técnica estatística utilizada para investigar a relação existente entre variáveis através da construção de uma equação (um modelo). De maneira geral, essa técnica pode ser utilizada com vários objetivos, dentre os quais se pode destacar: descrever a relação entre variáveis para entender um processo ou fenômeno; prever o valor de uma variável a partir do conhecimento dos valores das outras variáveis; substituir a medição de uma variável pela observação dos valores de outras variáveis; controlar os valores de uma variável em uma faixa de interesse.
 
-### Regressão: 
+### Regressão
+
 Slope (inclinação) diferente do ângulo 0.
 
 ### Anova
+
 Para variáveis categóricas/comparação.
 
 ```{r}
@@ -77,4 +80,3 @@ library(patchwork)
 
 g1|g2|g3
 ```
-

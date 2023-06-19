@@ -2,7 +2,9 @@
 title: "Olá, seja bem-vindo!"
 ---
 
-Que bom que chegou. Eu me chamo Dyênici, é um prazer te ter aqui!!
+|                                                                    |
+|:------------------------------------------------------------------:|
+| Que bom que chegou. Eu me chamo Dyênici, é um prazer te ter aqui!! |
 
 ![](images/20230115_134331.jpg){fig-align="center" width="176"}
 

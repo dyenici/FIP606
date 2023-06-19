@@ -74,7 +74,7 @@ website:
               url: https://github.com/emdelponte
 format:
   html:
-    theme: lux
+    theme: superhero
     css: styles.css
     toc: true
 
