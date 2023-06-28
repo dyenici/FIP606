@@ -41,8 +41,8 @@ dic(insects$spray,
 ```
 
 ## Teste de Scott Knott ExpDes.pt
-O método de Scott-Knott é eficiente nas aplicações em experimentos em que queremos comparar diferentes tratamentos. Seu intuito é separar as médias dos tratamentos em grupos homogêneos, assim minimizando soma de quadrados dentro; e maximizando-a
-entre os grupos, sem sobrepô-los. Para isso, é necessário ordenar as médias para que suas respectivas classificações sejam possíveis, determinar o número de partições possíveis, com a finalidade de realizar essa maximização entre grupos.
+
+O método de Scott-Knott é eficiente nas aplicações em experimentos em que queremos comparar diferentes tratamentos. Seu intuito é separar as médias dos tratamentos em grupos homogêneos, assim minimizando soma de quadrados dentro; e maximizando-a entre os grupos, sem sobrepô-los. Para isso, é necessário ordenar as médias para que suas respectivas classificações sejam possíveis, determinar o número de partições possíveis, com a finalidade de realizar essa maximização entre grupos.
 
 ### Experimento em DIC
 
@@ -58,6 +58,7 @@ dic(insects$spray,
 ```
 
 ### Experimento em DBC
+
 Nesse caso preciso incluir a coluna do bloco.
 
 ```{r}
@@ -70,4 +71,3 @@ mcomp="lsd", fac.names=c("Amostras","Genero"), sigT = 0.05,
 sigF = 0.05, unfold=NULL)
 
 ```
-

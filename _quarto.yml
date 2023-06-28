@@ -47,6 +47,8 @@ website:
           text: Comparação de Frequência
         - href: Aula 17.qmd
           text: Regressão não linear e EC50
+        - href: Aula 18.qmd
+          text: Teste de Tukey e Scott Knott  (Pacote ExpDes.pt)
         
       - text: Mapas
         menu: 
