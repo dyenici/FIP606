@@ -1,0 +1,73 @@
+---
+title: "Teste de Tukey e Scott Knott  (Pacote ExpDes.pt)"
+format: html
+---
+
+## Pacote "ExpDes.pt"
+
+Pacote para análise de delineamentos experimentais (DIC, DBC e DQL), experimentos em esquema fatorial duplo (em DIC e DBC), experimentos em parcelas subdivididas (em DIC e DBC), experimentos em esquema fatorial duplo com um tratamento adicional (em DIC e DBC), experimentos em fatorial triplo (em DIC e DBC) e experimentos em esquema fatorial triplo com um tratamento adicional (em DIC e DBC), fazendo análise de variância e comparação de múltiplas médias (para tratamentos qualitativos), ou ajustando modelos de regressao até a terceira potência (para tratamentos quantitativos); analise de residuos.
+
+```{r}
+warning(FALSE)
+
+library(tidyverse)
+library(readxl)
+library(ExpDes.pt)
+```
+
+## Teste de Tukey com pacote ExpDes.pt (Experimento em DIC)
+
+Comando para execução do teste:
+
+dic (trat, resp, quali = TRUE, mcomp = "tukey", nl = FALSE, hvar = "bartlett", sigT = 0.05, sigF = 0.05, unfold = NULL)
+
+```{r}
+InsectSprays
+insects <- InsectSprays
+
+dic(insects$spray,
+    insects$count,
+    mcomp = "tukey")
+```
+
+## Teste de Tukey com pacote ExpDes.pt (dados transformados em raiz - sqrt)
+
+```{r}
+insects$count2 <- sqrt(insects$count)
+
+dic(insects$spray,
+    insects$count2,
+    mcomp = "tukey")
+```
+
+## Teste de Scott Knott ExpDes.pt
+O método de Scott-Knott é eficiente nas aplicações em experimentos em que queremos comparar diferentes tratamentos. Seu intuito é separar as médias dos tratamentos em grupos homogêneos, assim minimizando soma de quadrados dentro; e maximizando-a
+entre os grupos, sem sobrepô-los. Para isso, é necessário ordenar as médias para que suas respectivas classificações sejam possíveis, determinar o número de partições possíveis, com a finalidade de realizar essa maximização entre grupos.
+
+### Experimento em DIC
+
+```{r}
+#Agrupamento pelo teste de Scott Knott: O teste agrupa médias e serve para 1 fator apenas.
+
+dic(insects$spray,
+    insects$count2,
+    mcomp = "sk")
+
+# Verificar os dados iguais sem ambiguidade
+# O teste de SK precisa atender as premissas (Normalidade e Homocedasticidade)
+```
+
+### Experimento em DBC
+Nesse caso preciso incluir a coluna do bloco.
+
+```{r}
+#Exemplo:
+
+data(ex5)
+attach(ex5)
+fat2.dbc(trat, genero, bloco, sabor, quali=c(TRUE,TRUE),
+mcomp="lsd", fac.names=c("Amostras","Genero"), sigT = 0.05,
+sigF = 0.05, unfold=NULL)
+
+```
+
