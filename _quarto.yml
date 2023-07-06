@@ -9,7 +9,12 @@ execute:
 
 website:
   title: "FIP 606"
+  favicon: logo.png
+  
   navbar:
+    pinned: true
+    logo: logo.png
+    
     left:
       - text: R Básico
         menu: 
@@ -54,6 +59,8 @@ website:
         menu: 
         - href: Aula 16.qmd
           text: Construindo Mapas no R
+        - href: Aula 19.qmd
+          text: Gráficos, Tabelas e Mapas interativos
         
     right:
        - icon: linkedin
