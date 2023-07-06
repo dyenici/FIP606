@@ -83,7 +83,9 @@ website:
               url: https://github.com/emdelponte
 format:
   html:
-    theme: superhero
+    theme: 
+      light: flatly
+      dark: superhero
     css: styles.css
     toc: true
 
