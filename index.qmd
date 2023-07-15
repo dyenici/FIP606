@@ -1,6 +1,7 @@
 ---
 title: "Olá, seja bem-vindo!"
-template: jolla
+about:
+  template: jolla
   id: about-block
   image: "Fotos1.jpg"
   image-shape: round
